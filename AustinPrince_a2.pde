@@ -309,9 +309,9 @@ public class Chart {
       //list.add(data.getInt(i, 1));
       list.add(values[i]);
     }
-    maxValue = Collections.max(list);
+    maxValue = max(list);
 
-    minValue = Collections.min(list);
+    minValue = min(list);
     if (minValue > 0) {
       minValue = 0;
     }
