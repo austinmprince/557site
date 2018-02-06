@@ -14,7 +14,7 @@ float minProp = 0.15;
 boolean drawingLines = false;
 void setup() {
 
-  size(800 , 600);
+  size(500 , 500);
   surface.setResizable(true);
 
   //Chart c1 = new Chart("Downloads/national-average.csv");
