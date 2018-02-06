@@ -318,21 +318,33 @@ public class Chart {
   }
 
   void max(ArrayList list) {
-  int max = list[0]
-  for (int i = 0; i < list.size(); i++) {
-    if (list[i] > max) {
-      max = list[i]
-    }
+    if (list.size() > 1) {
+      int max = list[0]
+      for (int i = 0; i < list.size(); i++) {
+        if (list[i] > max) {
+          max = list[i]
+        }
+
+      }
     return max;
+    }
+    else {
+      return 0;
+    }
   }
 
   void min(ArrayList list) {
-  int min = list[0]
-  for (int i = 0; i < list.size(); i++) {
-    if (list[i] < min) {
-      min = list[i]
+    if (list.size() > 1) {
+    int min = list[0]
+    for (int i = 0; i < list.size(); i++) {
+      if (list[i] < min) {
+        min = list[i]
+      }
     }
     return min;
+  }
+  else {
+    return 0;
   }
 
   }
