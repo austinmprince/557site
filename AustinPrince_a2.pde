@@ -15,7 +15,7 @@ boolean drawingLines = false;
 void setup() {
 
   size(500 , 500);
-  surface.setResizable(true);
+  // surface.setResizable(true);
 
   //Chart c1 = new Chart("Downloads/national-average.csv");
 
