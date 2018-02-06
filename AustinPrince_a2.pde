@@ -2,7 +2,7 @@ import java.util.*;
 Button button;
 
 // string of the name of the file containing info
-String graphName = "Downloads/national-average.csv";
+String graphName = "national-average.csv";
 color c = color(175, 100, 220);
 float lineAlpha = 0;
 boolean animating = false;
