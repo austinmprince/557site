@@ -1,4 +1,4 @@
-String fileName = "Downloads/iris.csv";
+String fileName = "iris.csv";
 // dictate how much of the screen our x axes take up
 float sxProp = 0.2;
 int drawn = 0;
