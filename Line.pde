@@ -1,4 +1,4 @@
-class Line {
+public class Line {
   String lineName;
   float [] values;
   float [] points;

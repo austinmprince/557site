@@ -1,4 +1,4 @@
-class DrawRect {
+public class DrawRect {
   float xCoord;
   float yCoord;
   float xWidth;

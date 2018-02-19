@@ -1,4 +1,4 @@
-class Button {
+public class Button {
   float xPos;
   float yPos; 
   float xSize; 
