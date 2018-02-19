@@ -1,6 +1,7 @@
 String fileName = "Downloads/iris.csv";
 // dictate how much of the screen our x axes take up
 float sxProp = 0.2;
+int drawn = 0;
 float exProp = 0.8;
 float syProp = 0.1;
 float eyProp = 0.9;
@@ -38,6 +39,7 @@ void draw() {
   background(255);
   ax.Draw();
   drawRect.drawing();
+  ax.checkPos();
   
   
 }
@@ -56,7 +58,7 @@ void mousePressed() {
      if (c.flip.MouseIsOver()) {
        c.inverse = !c.inverse;
        ax.flipVals(c.field);
-       println(c.inverse);
+       //println(c.inverse);
      }
    }
    drawRect.startDrawingRectAt(mouseX, mouseY);

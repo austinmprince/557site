@@ -3,6 +3,8 @@ class Line {
   float [] values;
   float [] points;
   boolean inRange;
+  float []slope;
+  float []yInt;
   Line(String name, float [] vals) {
     lineName = name;
     values = vals;
