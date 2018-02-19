@@ -27,7 +27,6 @@ void setup() {
   rectStartY = 0;
   rectWidth = 0;
   rectHeight = 0;
-  surface.setResizable(true);
   ax = new Axes(fileName);
   boxSet = false;
   //String[] lines = loadStrings(fileName);
