@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <style>
+    /* CSS goes here. */
+  </style>
+</head>
+
+<body>
+  <script src="//d3js.org/d3.v4.min.js" charset="utf-8"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+
+
+  <body>
+    <div id="header">
+    </div>
+    <div id="colorbar"></div>
+    <div id="grid">
+    </div>
+    <script>
+
+
+      var currentYear = 2016;
+      var topH = 100;
+      var topW = 950;
+      var repColors = ["#fcd5cf", "#f68f7f", "#f47360", "#f03b20", "#cf270e", "#801809"]
+      var demColors = ["#c3e2f1", "#7ec0e2", "#55acd8", "#2b8cbe", "#2578a2", "#1e6387"]
+      var percents = ["50>", "50-40", "40-30", "30-20", "20-10", "10-0", "0-10", "10-20","20-30","30-40","40-50","<50"]
+
+
+        loadHeader();
+        loadStates(2016);
+
+
+      function loadHeader() {
+
+        d3.csv("/data/yearwise-winner.csv", function(data) {
+          var winner = [];
+          var counter = 0
+          data.forEach(function(entry) {
+            winner.push({
+              "winner" : entry.PARTY,
+              "year" : entry.YEAR,
+              "x" : counter,
+              "y" : counter
+            })
+            counter = counter + 1;
+
+          })
+
+          var svgContainer = d3.select("#header").append("svg")
+          .attr("height", topH)
+          .attr("width", topW)
+
+
+          var numYears = winner.length;
+          var yearPadding = 5;
+          var yearRectSize = (topW / numYears) - yearPadding;
+          var yearRectY = 60;
+          var topPadding = 5
+
+
+
+          svgContainer.selectAll("rect").data(winner).enter().append("rect")
+          .attr("x", function(d) { return (topW / numYears) * d.x  })
+          .attr("y", function(d) { return yearRectY - topPadding })
+          .attr("width", yearRectSize)
+          .attr("height", yearRectSize)
+          .attr("fill", "black")
+          .attr("id", function(d) { return d.year })
+          .attr("stroke", function(d) {
+            if(d.year == currentYear) { return "black"; }
+          })
+          .attr("stroke-width", function(d) {
+            if (d.year == currentYear) { return 2; }
+          })
+          .attr("class", "yearSelect")
+          .attr("fill", function(d) {
+            if (d.winner == "D") { return "#2b8cbe"}
+            else { return "#de2d26"}
+          })
+          .on("click", function(d) {
+            currentYear = d.year;
+            console.log(currentYear);
+            d3.selectAll("#grid").remove();
+            d3.selectAll("#header").remove();
+            d3.selectAll("#colorbar").remove();
+                    //$("#colorbar").load(document.URL + "#colorbar")
+
+            d3.select("body").append("div").attr("id", "header")
+            d3.select("body").append("div").attr("id", "colorbar")
+            d3.select("body").append("div").attr("id", "grid");
+            // d3.queue()
+            // $(window).on('load', function(){
+            //   console.log("loading stuff");
+              loadHeader();
+              loadStates(d.year);
+            // });
+
+
+
+
+          });
+          svgContainer.selectAll("text").data(winner).enter()
+          .append("text")
+          .attr("x", function(d) { return (topW / numYears) * d.x + yearRectSize/2 })
+          .attr("y", function(d) { return (yearRectY + yearRectSize / 2)  })
+          .text(function(d) { return d.year })
+          .attr("id", function(d) { return d.year })
+          .attr("text-anchor", "middle")
+          .attr("alignment-baseline", "center");
+          svgContainer.append("text")
+          .attr("x", topPadding)
+          .attr("y", topPadding)
+          .attr("alignment-baseline", "hanging")
+          .text("Austin Prince Assignment 4")
+
+
+
+
+        });
+
+
+
+
+        var colorBar = demColors.reverse().concat(repColors);
+        demColors = demColors.reverse();
+        // console.log(colorBar);
+        // console.log(topW);
+        var svgColor = d3.select("#colorbar").append("svg")
+        .attr("height", 50)
+        .attr("width", topW);
+        var barPadding = 400;
+        var colorBarRectSize = 20;
+        svgColor.selectAll("rect").data(colorBar).enter().append("rect")
+        .attr("x", function(d) { return ((topW - barPadding)/colorBar.length) * colorBar.indexOf(d)})
+        .attr("y", 10)
+        .attr("width", (topW-barPadding)/colorBar.length)
+        .attr("height", 20)
+        .attr("fill", function(d) { return d });
+
+        svgColor.selectAll("text").data(percents).enter().append("text")
+        .attr("x", function(d) { return (topW-barPadding) / percents.length * percents.indexOf(d) + ((topW-barPadding)/percents.length) -7 })
+        .attr("y", 32)
+        .attr("text-anchor", "end")
+        .attr("alignment-baseline", "hanging")
+        .text(function(d) { return d })
+
+
+
+
+
+
+
+     }
+      function loadStates(year) {
+        var csvString = "election-results-";
+        var csvFile = '/data/'.concat(csvString.concat(year.toString()).concat('.csv'));
+        // console.log(csvFile);
+
+        d3.csv(csvFile, function(data) {
+          console.log(csvFile);
+          // console.log(data[0]);
+          var square = 20;
+          var rowNum = 8;
+          var colNum = 12;
+          var padding = 0;
+
+
+          var w = 950;
+          var h = 500;
+          var rectSize = 50;
+          var rectPadding = 3;
+          // var colFac = (w - (2 * padding)) / colNum;
+          // var rowFac = (h - (2 * padding)) / rowNum;
+
+          var stateArray = [];
+          var div = d3.select("body").append("div")
+          .attr("class", "tooltip")
+          .attr("opacity", 0)
+
+          var svg = d3.select("#grid").append("svg")
+          .attr("width", w)
+          .attr("height", h);
+          data.forEach(function(entry) {
+            stateArray.push({
+              "name" : entry.State,
+              "abr" : entry.Abbreviation,
+              "row" : entry.Row,
+              "col" : entry.Col,
+              "d_nom" : entry.D_Nominee,
+              "d_percent" : entry.D_Percentage,
+              "d_votes" : entry.D_Votes,
+              "r_nom" : entry.R_Nominee,
+              "r_percent" : entry.R_Percentage,
+              "r_votes" : entry.R_Votes,
+              "ev" : entry.Total_EV
+
+            })
+          });
+          // console.log(stateArray);
+          // var div = d3.select("body").append("div")
+          // .attr("class", "tooltip")
+          // .style("opacity", 0);
+
+
+          // svg.selectAll("rect").data(years).enter().append("rect")
+          // .attr("x", function(d) { return d.x  * 10 + padding })
+          // .attr("y", function(d) { return 10 })
+          // .attr("width", 50)
+          // .attr("height", 50)
+          // .attr("fill", "black")
+          // console.log(stateArray);
+
+
+
+          // for (var i = 0; var i < repColors.length + demColors.length; i ++) {
+          //   if i < repColors.len
+          // }
+          // var counter = 0;
+
+
+
+          svg.selectAll("rect").data(stateArray).enter().append("rect")
+          .attr("x", function(d) { return d.col * rectSize + padding})
+          .attr("y", function(d) { return d.row * rectSize + padding})
+          .attr("id", function(d) { return d.abr})
+          .attr("class", "states")
+          .attr("fill", function(d) {
+            var dWinPercent = (d.d_percent - d.r_percent);
+            // console.log(d.abr);
+            //  console.log(dWinPercent);
+            if (dWinPercent < 0) {
+              dWinPercent = -5;
+            }
+            else {
+              dWinPercent = parseInt((dWinPercent));
+            }
+            if (dWinPercent >= 5) {
+              //console.log(dWinPercent);
+              dWinPercent = 5;
+            }
+            var rWinPercent = (d.r_percent - d.d_percent);
+            if (d.abr == "NH") {
+            console.log("rwin calc" + rWinPercent);
+          }
+            if (rWinPercent < 0) {
+              rWinPercent = -5;
+            }
+            else {
+              rWinPercent = parseInt((rWinPercent))
+            }
+            if (rWinPercent >= 5) {
+              rWinPercent = 5;
+            }
+            // if (d.abr == "NH") {
+            //   console.log(d.name);
+            //   console.log("r percent"  +d.r_percent);
+            //   console.log("d percent" +d.d_percent);
+            //   console.log(parseInt(d.d_percent - d.r_percent)/10);
+            //   console.log("dwin" +dWinPercent);
+            //   console.log("rwin"+ rWinPercent);
+            //
+            // }
+
+
+           if (dWinPercent >= 0) {
+            //console.log(d.abr);
+            //   console.log(dWinPercent);
+              return demColors[dWinPercent] }
+            else { return repColors[rWinPercent] }
+          })
+          .attr("width", rectSize - rectPadding)
+          .attr("height", rectSize - rectPadding)
+          .on("mouseenter", function(d) {
+            console.log("in here");
+            var g = svg.append("g")
+            .attr("id", d.abr + "tt");
+            g.append("rect")
+            .attr("height", rectSize * 1.5)
+            .attr("width", rectSize * 2.5)
+            .attr("x", d.col * rectSize + padding)
+            .attr("y", d.row * rectSize + padding + rectSize)
+            .attr("fill", "white")
+            g.append("text")
+            .style("font-size", "20px")
+            .attr("x", d.col * rectSize + padding)
+            .attr("y", d.row * rectSize + padding + rectSize)
+            .attr("alignment-baseline", "hanging")
+            .text(d.name);
+            g.append("text")
+            .style("font-size", "12px")
+            .attr("x", d.col * rectSize + padding)
+            .attr("y", d.row * rectSize + padding + rectSize + 30)
+
+            .text("Electoral Votes: " + d.ev)
+            g.append("text")
+            .attr("x", d.col * rectSize + padding)
+            .attr("y", d.row * rectSize + padding + rectSize + 40)
+            .style("font-size", "8px")
+            .text(d.d_nom + ": " + d.d_votes.toLocaleString())
+            g.append("text")
+            .style("font-size", "8px")
+            .attr("x", d.col * rectSize + padding)
+            .attr("y", d.row * rectSize + padding + rectSize + 50)
+            .text(d.r_nom + ": " + d.r_votes.toLocaleString())
+
+
+          })
+
+
+
+          .on("mouseout", function(d) {
+            svg.select("#" + d.abr + "tt").remove();
+          })
+
+          // .on("mouseover", function(d) {
+          //   div.transition()
+          //   .duration(200)
+          //   .style("opacity", 0.9);
+          //   div.html("<p>this is it</p>")
+          //   .style("left", (d.row * rectSize + padding) + "px")
+          //   .style("top", (d.col * rectSize + padding) + "px");
+          // })
+          // .on("mouseout", function(d) {
+          //   div.transition(200)
+          //   .style("opacity", 0)
+          // });
+
+          // $(".states").hover(function() {
+          //   var currState = $(this).attr("id");
+          //   var statePlace;
+          //   for (var i = 0; i < stateArray.length; i ++) {
+          //     if (stateArray[i].abr == currState) {
+          //       statePlace = i;
+          //       break;
+          //     }
+          //   }
+          //   console.log(stateArray[statePlace]);
+          //   svg.select("rect").data(stateArray[statePlace]).enter().append("rect")
+          //   .attr("x", function(d) { return d.col * rectSize + padding})
+          //   .attr("y", function(d) { return d.row * rectSize + padding })
+          //   .attr("fill", "black")
+          //
+          //
+          // })
+
+
+
+
+
+          svg.selectAll("text").data(stateArray).enter().append("text")
+          .attr("x", function(d) { return d.col * rectSize + padding + rectSize / 2 })
+          .attr("y", function(d) { return d.row  * rectSize + padding + rectSize / 2})
+          .attr("id", function(d) { return d.abr})
+          .style("font-size", "12px")
+          .text(function(d) { return d.abr + ": " + d.ev })
+          .attr("text-anchor", "middle")
+          .attr("alignment-baseline", "center");
+
+          // svg.selectAll("#id").data(stateArray).enter().append("tspan")
+          // .attr("x", function(d) { return d.col * rectSize + padding + rectSize/2})
+          // .attr("y", function(d) { return d.row * rectSize + padding + rectSize / 2})
+          //
+          // .text(function(d) { return d.ev})
+          // .attr("text-anchor", "middle")
+          // .attr("alignment-baseline", "hanging")
+          //
+          // svg.selectAll("text").data(stateArray).enter().append("tspan")
+          // .attr("x", function(d) { return d.col * rectSize + padding + rectSize/2})
+          // .attr("y", function(d) { return d.row * rectSize + padding + rectSize / 2})
+          // .text(function(d) { return d.abr})
+          // .attr("text-anchor", "middle")
+          // .attr("alignment-baseline", "hanging")
+
+
+
+
+        })
+    }
+
+
+
+    </script>
+  </body>
+
+</html>
